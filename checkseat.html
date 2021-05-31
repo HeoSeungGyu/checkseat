@@ -1,10 +1,51 @@
 <!DOCTYPE html>
-<html:>
+<html lang="ko">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width"> 
     <title> 빈자리 알림이</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
+	<script>
+	
+		function loadDoc() {
+			var xmlHttp = new XMLHttpRequest();
+			xmlHttp.onreadystatechange = function() {
+				if(this.status == 200 && this.readyState == this.DONE) {
+					findResult(xmlHttp);
+				}
+			};
+			xmlHttp.open("GET", "http://openapi.tago.go.kr/openapi/service/BusLcInfoInqireService/getRouteAcctoBusLcList?ServiceKey=NJPq5bgNwTn08ylVVjGuBpmtiwARPqc%2BUR4WPrIf5advbjU9WA1RrL1SIMjKUNhRHh2fKE8QOVUpf6%2FBu9lCpA%3D%3D&cityCode=33020&routeId=CHB272000377", true);
+			xmlHttp.send();
+		}
+
+		function findResult(xmlHttp) {
+			var xmlObj, path, result, nodeList, node;
+			xmlObj = xmlHttp.responseXML;
+			path = "//nodenm"; 
+			result = "";
+		
+			// 익스플로러를 위한 코드
+			if (window.ActiveXObject !== undefined || xmlHttp.responseType == "msxml-document") {
+				xmlObj.setProperty("SelectionLanguage", "XPath");
+				nodeList = xmlObj.selectNodes(path);
+
+				for (i=0; i<nodeList.length; i++) {
+					result += nodeList[i].text + "<br>";
+				}
+			// 익스플로러를 제외한 브라우저를 위한 코드
+			} else if (document.implementation && document.implementation.createDocument) {
+				nodeList = xmlObj.evaluate(path, xmlObj, null, XPathResult.ANY_TYPE, null);
+				node = nodeList.iterateNext();
+
+				while (node) {
+					result += node.firstChild.nodeValue + "<br>";
+					node = nodeList.iterateNext();
+				}
+			}
+
+			document.getElementById("text").innerHTML = result;
+		}
+	</script>
   </head>
   <style>
   .nav {
@@ -33,7 +74,6 @@
   .title {
     font-size: 30px;
     font-weight: bold;
-    margin-left: 32.5px;
   } 
 
   .main {
@@ -71,7 +111,11 @@
     margin-left: 30px;
     margin-top:500px;
   }
-
+  .price-item-subtitle {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+  }
   .price-item-button1 {
     padding: .5rem 1rem;
     font-size: 20px;
@@ -139,8 +183,12 @@
           <div class="price-item-title">
              버스
             </div>
-            <button class="price-item-button1"><a href="https://ray-basic.github.io/bus_loacte/bus_locate.html">999</a>
+            <button class="price-item-button1" onclick="loadDoc()">999
               </button>
+			  <p class="price-item-subtitle" id="text"></p>
+			  <b> <? 
+			  header("Content-Type: application/xml"); 
+	  		  header("Access-Control-Allow-Origin: *”); ?> </b>
               <div class= "price-item-price">
                노선을 클릭해주십쇼.
               </div>
